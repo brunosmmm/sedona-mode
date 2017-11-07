@@ -34,7 +34,7 @@
         ;; module instantiation
         ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*(.*)" 1 font-lock-function-name-face)
         ;; port type
-        ("\\(in\\|out\\|inout\\)\\s-+\\(buffer\\)?\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\),?" 3 font-lock-type-face)
+        ("\\(in\\|out\\|inout\\)\\(\\s-+buffer\\)?\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\),?" 3 font-lock-type-face)
         ;; attribute assigment
         ("\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)" 1 font-lock-variable-name-face)
         ;; named scope
