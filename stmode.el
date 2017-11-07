@@ -17,7 +17,7 @@
   "Syntax table for st-mode")
 
 (setq st-mode-keywords '("module" "include" "import" "define"))
-(setq st-mode-builtins '("in" "out" "inout" "buffer"))
+(setq st-mode-builtins '("in" "out" "inout" "buffer" "parent" "self"))
 (setq st-mode-operators '("&"))
 
 (setq st-mode-keywords-regexp (regexp-opt st-mode-keywords 'words))
