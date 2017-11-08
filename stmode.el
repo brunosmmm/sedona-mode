@@ -48,12 +48,49 @@
  '("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*(.*)" 1 'font-lock-function-name-face)
  )
 
+;; indentation
+(defun st-mode-indent-line ()
+  "Indent lines"
+  (interactive)
+  (beginning-of-line)
+  (if (bobp)b
+      (indent-line-to 0)
+    (let ((not-indented t) cur-indent)
+      (if (looking-at "^.*}")
+          (progn
+            (save-excursion
+              (if (looking-at "^.*{}")
+                  (progn
+                    (forward-line -1)
+                    (setq cur-indent (current-indentation)))
+                (forward-line -1)
+                (setq cur-indent (- (current-indentation) default-tab-width))
+                (if (< cur-indent 0)
+                    (setq cur-indent 0)))))
+        (save-excursion
+          (while not-indented
+            (forward-line -1)
+            (if (looking-at "^.*}")
+                (progn
+                  (setq cur-indent (current-indentation))
+                  (setq not-indented nil))
+              (if (looking-at "^.*{")
+                  (progn
+                    (setq cur-indent (+ (current-indentation) default-tab-width))
+                    (setq not-indented nil))
+                (if (bobp)
+                    (setq not-indented nil)))))))
+        (if cur-indent
+            (indent-line-to cur-indent)
+          (indent-line-to 0)))))
+
 (defun st-mode ()
   "Streaming Architecture DSL mode"
   (interactive)
   (kill-all-local-variables)
   (set-syntax-table st-mode-syntax-table)
   (set (make-local-variable 'font-lock-defaults) '(st-mode-font-lock-keywords))
+  (set (make-local-variable 'indent-line-function) 'st-mode-indent-line)
   (setq major-mode 'st-mode)
   (setq mode-name "ST")
   (run-hooks 'st-mode-hook))
