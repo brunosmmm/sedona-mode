@@ -30,7 +30,7 @@
         (,specch-mode-builtins-regexp . font-lock-builtin-face)
         ;;(,specch-mode-operators-regexp . font-lock-negation-char-face)
         ;; module declaration
-        ("\\s-*hierarchy\\s-*\\(\\sw+\\)\\s-*(.*)" 1 font-lock-function-name-face)
+        ("\\s-*hierarchy\\s-*\\(\\sw+\\)\\s-*\\(#(.*)\\)?(.*)" 1 font-lock-function-name-face)
         ;; module instantiation
         ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*(.*)" 1 font-lock-function-name-face)
         ;; port type
