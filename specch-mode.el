@@ -16,7 +16,7 @@
     table)
   "Syntax table for specch-mode")
 
-(setq specch-mode-keywords '("hierarchy" "import" ))
+(setq specch-mode-keywords '("hierarchy" "import" "generate"))
 (setq specch-mode-builtins '("in" "out" "inout"))
 ;;(setq specch-mode-operators '("&"))
 
