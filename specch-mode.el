@@ -16,8 +16,8 @@
     table)
   "Syntax table for specch-mode")
 
-(setq specch-mode-keywords '("hierarchy" "import" "generate" "type"))
-(setq specch-mode-builtins '("in" "out" "inout"))
+(setq specch-mode-keywords '("hierarchy" "import" "generate" "type" "genport"))
+(setq specch-mode-builtins '("in" "out" "inout" "include" "define"))
 ;;(setq specch-mode-operators '("&"))
 
 (setq specch-mode-keywords-regexp (regexp-opt specch-mode-keywords 'words))
@@ -32,15 +32,15 @@
         ;; module declaration
         ("\\s-*hierarchy\\s-*\\(\\sw+\\)\\s-*\\(#(.*)\\)?(.*)" 1 font-lock-function-name-face)
         ;; module instantiation
-        ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*(.*)" 1 font-lock-function-name-face)
+        ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)" 1 font-lock-function-name-face)
         ;; port type
         ("\\(in\\|out\\|inout\\)\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\),?" 2 font-lock-type-face)
         ;; variable / channel declaration
         ("^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;" 1 font-lock-type-face)
-        ;; named scope
-        ;;("\\(\\sw+\\)\\s-*{.*" 1 font-lock-variable-name-face)
+        ;; type declaration
+        ("type\\s-+\\(\\sw+\\)\\s-*;" 1 font-lock-type-face)
         ;; define
-        ;;("define\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)" 1 font-lock-constant-face)
+        ("#define\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)" 1 font-lock-constant-face)
         ))
 
 (font-lock-add-keywords
