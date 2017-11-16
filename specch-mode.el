@@ -16,7 +16,7 @@
     table)
   "Syntax table for specch-mode")
 
-(setq specch-mode-keywords '("hierarchy" "import" "generate" "type" "genport"))
+(setq specch-mode-keywords '("hierarchy" "import" "generate" "type" "genport" "enum"))
 (setq specch-mode-builtins '("in" "out" "inout" "include" "define"))
 ;;(setq specch-mode-operators '("&"))
 
@@ -45,6 +45,11 @@
         ;; templates
         ("\\(\\[\\[\\)" 1 font-lock-warning-face)
         ("\\(\\]\\]\\)" 1 font-lock-warning-face)
+        ;; enum
+        ("enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*;" 1 font-lock-type-face)
+        ;; enum access
+        ("\\(\\sw+\\)::\\(\\sw+\\)" 1 font-lock-type-face)
+        ("\\(\\sw+\\)::\\(\\sw+\\)" 1 font-lock-constant-face)
         ))
 
 (font-lock-add-keywords
