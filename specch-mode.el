@@ -34,7 +34,8 @@
         ;; module instantiation
         ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)" 1 font-lock-function-name-face)
         ;; port type
-        ("\\(in\\|out\\|inout\\)\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\),?" 2 font-lock-type-face)
+        ("\\(in\\|out\\|inout\\)\\s-+\\(genport(.+)\\s-+\\)?\\(\\sw+\\)\\s-+\\(\\sw+\\),?" 3 font-lock-type-face)
+        ;; parameter type?
         ;; variable / channel declaration
         ("^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;" 1 font-lock-type-face)
         ;; type declaration
