@@ -41,6 +41,9 @@
         ("type\\s-+\\(\\sw+\\)\\s-*;" 1 font-lock-type-face)
         ;; define
         ("#define\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)" 1 font-lock-constant-face)
+        ;; templates
+        ("\\(\\[\\[\\)" 1 font-lock-warning-face)
+        ("\\(\\]\\]\\)" 1 font-lock-warning-face)
         ))
 
 (font-lock-add-keywords
