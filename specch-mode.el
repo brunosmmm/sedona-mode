@@ -49,7 +49,7 @@
         ("enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*;" 1 font-lock-type-face)
         ;; enum access
         ("\\(\\sw+\\)::\\(\\sw+\\)" 1 font-lock-type-face)
-        ("\\(\\sw+\\)::\\(\\sw+\\)" 1 font-lock-constant-face)
+        ("\\(\\sw+\\)::\\(\\sw+\\)" 2 font-lock-constant-face)
         ))
 
 (font-lock-add-keywords
