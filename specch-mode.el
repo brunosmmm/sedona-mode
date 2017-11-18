@@ -16,8 +16,8 @@
     table)
   "Syntax table for specch-mode")
 
-(setq specch-mode-keywords '("hierarchy" "import" "generate" "type" "genport" "enum"))
-(setq specch-mode-builtins '("in" "out" "inout" "include" "define"))
+(setq specch-mode-keywords '("hierarchy" "import" "generate" "type" "genport" "enum" "module" "note"))
+(setq specch-mode-builtins '("in" "out" "inout" "include" "define" "const"))
 ;;(setq specch-mode-operators '("&"))
 
 (setq specch-mode-keywords-regexp (regexp-opt specch-mode-keywords 'words))
@@ -30,14 +30,16 @@
         (,specch-mode-builtins-regexp . font-lock-builtin-face)
         ;;(,specch-mode-operators-regexp . font-lock-negation-char-face)
         ;; module declaration
-        ("\\s-*hierarchy\\s-*\\(\\sw+\\)\\s-*\\(#(.*)\\)?(.*)" 1 font-lock-function-name-face)
+        ("\\s-*\\(hierarchy\\|module\\)\\s-*\\(\\sw+\\)\\s-*\\(#(.*)\\)?(.*)" 2 font-lock-function-name-face)
         ;; module instantiation
         ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)" 1 font-lock-function-name-face)
+        ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)" 2 font-lock-variable-name-face)
         ;; port type
         ("\\(in\\|out\\|inout\\)\\s-+\\(genport(.+)\\s-+\\)?\\(\\sw+\\)\\s-+\\(\\sw+\\),?" 3 font-lock-type-face)
         ;; parameter type?
         ;; variable / channel declaration
         ("^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;" 1 font-lock-type-face)
+        ("^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;" 2 font-lock-variable-name-face)
         ;; type declaration
         ("type\\s-+\\(\\sw+\\)\\s-*;" 1 font-lock-type-face)
         ;; define
@@ -50,6 +52,10 @@
         ;; enum access
         ("\\(\\sw+\\)::\\(\\sw+\\)" 1 font-lock-type-face)
         ("\\(\\sw+\\)::\\(\\sw+\\)" 2 font-lock-constant-face)
+        ;; notes
+        ("note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;" 1 font-lock-type-face)
+        ("note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;" 3 font-lock-variable-name-face)
+        ("note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;" 4 font-lock-constant-face)
         ))
 
 (font-lock-add-keywords
