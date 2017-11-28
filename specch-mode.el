@@ -1,10 +1,10 @@
-;;; specch-mode.el ---  (Name here) Streaming Architecture DSL mode
+;;; sedona-mode.el ---  StrEaming DOmaiN Architecture DSL mode
 ;; Author: Bruno Morais <brunosmmm@gmail.com>
 
 ;;; Code:
-(defvar specch-mode-hook nil)
+(defvar sedona-mode-hook nil)
 
-(defvar specch-mode-syntax-table
+(defvar sedona-mode-syntax-table
   (let ((table (make-syntax-table)))
     ;; strings
     (modify-syntax-entry ?\" "\"" table)
@@ -14,21 +14,21 @@
     (modify-syntax-entry ?\n "> b" table)
     (modify-syntax-entry ?_ "w" table)
     table)
-  "Syntax table for specch-mode")
+  "Syntax table for sedona-mode")
 
-(setq specch-mode-keywords '("hierarchy" "import" "generate" "type" "genport" "enum" "module" "note"))
-(setq specch-mode-builtins '("in" "out" "inout" "include" "define" "const"))
-;;(setq specch-mode-operators '("&"))
+(setq sedona-mode-keywords '("hierarchy" "import" "generate" "type" "genport" "enum" "module" "note"))
+(setq sedona-mode-builtins '("in" "out" "inout" "include" "define" "const"))
+;;(setq sedona-mode-operators '("&"))
 
-(setq specch-mode-keywords-regexp (regexp-opt specch-mode-keywords 'words))
-(setq specch-mode-builtins-regexp (regexp-opt specch-mode-builtins 'words))
-;;(setq specch-mode-operators-regexp (regexp-opt specch-mode-operators 'words))
+(setq sedona-mode-keywords-regexp (regexp-opt sedona-mode-keywords 'words))
+(setq sedona-mode-builtins-regexp (regexp-opt sedona-mode-builtins 'words))
+;;(setq sedona-mode-operators-regexp (regexp-opt sedona-mode-operators 'words))
 
-(setq specch-mode-font-lock-keywords
+(setq sedona-mode-font-lock-keywords
       `(
-        (,specch-mode-keywords-regexp . font-lock-keyword-face)
-        (,specch-mode-builtins-regexp . font-lock-builtin-face)
-        ;;(,specch-mode-operators-regexp . font-lock-negation-char-face)
+        (,sedona-mode-keywords-regexp . font-lock-keyword-face)
+        (,sedona-mode-builtins-regexp . font-lock-builtin-face)
+        ;;(,sedona-mode-operators-regexp . font-lock-negation-char-face)
         ;; module declaration
         ("\\s-*\\(hierarchy\\|module\\)\\s-*\\(\\sw+\\)\\s-*\\(#(.*)\\)?(.*)" 2 font-lock-function-name-face)
         ;; module instantiation
@@ -59,12 +59,12 @@
         ))
 
 (font-lock-add-keywords
- 'specch-mode-font-lock-keywords
+ 'sedona-mode-font-lock-keywords
  '("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*(.*)" 1 'font-lock-function-name-face)
  )
 
 ;; indentation
-(defun specch-mode-indent-line ()
+(defun sedona-mode-indent-line ()
   "Indent lines"
   (interactive)
   (beginning-of-line)
@@ -99,16 +99,16 @@
             (indent-line-to cur-indent)
           (indent-line-to 0)))))
 
-(defun specch-mode ()
+(defun sedona-mode ()
   "Streaming Architecture DSL mode"
   (interactive)
   (kill-all-local-variables)
-  (set-syntax-table specch-mode-syntax-table)
-  (set (make-local-variable 'font-lock-defaults) '(specch-mode-font-lock-keywords))
-  (set (make-local-variable 'indent-line-function) 'specch-mode-indent-line)
-  (setq major-mode 'specch-mode)
+  (set-syntax-table sedona-mode-syntax-table)
+  (set (make-local-variable 'font-lock-defaults) '(sedona-mode-font-lock-keywords))
+  (set (make-local-variable 'indent-line-function) 'sedona-mode-indent-line)
+  (setq major-mode 'sedona-mode)
   (setq mode-name "SpecC-H")
-  (run-hooks 'specch-mode-hook))
+  (run-hooks 'sedona-mode-hook))
 
-(provide 'specch-mode)
-;;; specch-mode.el ends here
+(provide 'sedona-mode)
+;;; sedona-mode.el ends here
