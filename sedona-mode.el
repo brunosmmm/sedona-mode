@@ -12,6 +12,8 @@
   :prefix "sedona-"
   :group 'languages)
 
+(defconst sedona/default-tab-width 2)
+
 (defconst sedona/keywords-regexp
   (regexp-opt
    (list "hierarchy"
@@ -193,9 +195,9 @@
   "Indent lines"
   (interactive)
   (beginning-of-line)
-  (if (bobp)b
+  (if (bobp)
       (indent-line-to 0)
-    (let ((not-indented t) cur-indent)
+    (let ((not-indented t) in-map-depth cur-indent)
       (if (looking-at "^.*}")
           (progn
             (save-excursion
@@ -204,7 +206,7 @@
                     (forward-line -1)
                     (setq cur-indent (current-indentation)))
                 (forward-line -1)
-                (setq cur-indent (- (current-indentation) default-tab-width))
+                (setq cur-indent (- (current-indentation) sedona/default-tab-width))
                 (if (< cur-indent 0)
                     (setq cur-indent 0)))))
         (save-excursion
@@ -216,13 +218,22 @@
                   (setq not-indented nil))
               (if (looking-at "^.*{")
                   (progn
-                    (setq cur-indent (+ (current-indentation) default-tab-width))
+                    (setq cur-indent (+ (current-indentation) sedona/default-tab-width))
                     (setq not-indented nil))
-                (if (bobp)
-                    (setq not-indented nil)))))))
-        (if cur-indent
-            (indent-line-to cur-indent)
-          (indent-line-to 0)))))
+                (if (looking-at "^.*:$")
+                    (progn
+                      (setq cur-indent (+ (current-indentation) sedona/default-tab-width))
+                      (setq not-indented nil)
+                      (setq in-map-depth t))
+                  (if (looking-at "^.*->.*;")
+                      (progn
+                        (setq cur-indent 0)
+                        (setq not-indented nil))
+                    (if (bobp)
+                        (setq not-indented nil)))))))))
+      (if cur-indent
+          (indent-line-to cur-indent)
+        (indent-line-to 0)))))
 
 (defvar sedona-mode-map
   (let ((map (make-sparse-keymap)))
@@ -237,6 +248,7 @@
   (use-local-map sedona-mode-map)
   (set (make-local-variable 'font-lock-defaults)
        '(sedona/font-lock-definitions nil t))
+  (set (make-local-variable 'indent-line-function) 'sedona-mode-indent-line)
   (font-lock-mode 1)
   ;; strings
   (modify-syntax-entry ?\" "\"" sedona-mode-syntax-table)
