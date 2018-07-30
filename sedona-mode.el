@@ -70,7 +70,7 @@
 
 ;; NOTE doesn't work
 (defconst sedona/variable-declaration-regex
-  "^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;"
+  "\\(\\sw+\\)\\s-+[a-zA-Z_0-9, ]+;"
   )
 
 (defconst sedona/type-declaration-regex
@@ -140,9 +140,8 @@
      (1 font-lock-function-name-face)
      (2 font-lock-variable-name-face))
     ;; variable and channel declarations
-    ;;(,sedona/variable-declaration-regex
-    ;; (1 font-lock-type-face)
-    ;; (2 font-lock-variable-name-face))
+    (,sedona/variable-declaration-regex
+     (1 font-lock-variable-name-face))
     ;; type declarations
     (,sedona/type-declaration-regex
      (1 font-lock-keyword-face t)
