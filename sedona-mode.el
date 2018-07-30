@@ -2,66 +2,191 @@
 ;; Author: Bruno Morais <brunosmmm@gmail.com>
 
 ;;; Code:
-(defvar sedona-mode-hook nil)
 
-(defvar sedona-mode-syntax-table
-  (let ((table (make-syntax-table)))
-    ;; strings
-    (modify-syntax-entry ?\" "\"" table)
-    ;; comment stuff
-    (modify-syntax-entry ?/ ". 124b" table)
-    (modify-syntax-entry ?* ". 23" table)
-    (modify-syntax-entry ?\n "> b" table)
-    (modify-syntax-entry ?_ "w" table)
-    table)
-  "Syntax table for sedona-mode")
+(require 'custom)
+(require 'font-lock)
+(require 'regexp-opt)
 
-(setq sedona-mode-keywords '("hierarchy" "import" "generate" "type" "genport" "enum" "module" "note"))
-(setq sedona-mode-builtins '("in" "out" "inout" "include" "define" "const"))
-;;(setq sedona-mode-operators '("&"))
+(defgroup sedona nil
+  "Major mode for Sedona DSL."
+  :prefix "sedona-"
+  :group 'languages)
 
-(setq sedona-mode-keywords-regexp (regexp-opt sedona-mode-keywords 'words))
-(setq sedona-mode-builtins-regexp (regexp-opt sedona-mode-builtins 'words))
-;;(setq sedona-mode-operators-regexp (regexp-opt sedona-mode-operators 'words))
+(defconst sedona/keywords-regexp
+  (regexp-opt
+   (list "hierarchy"
+         "module"
+         "import"
+         "generate"
+         "genport"
+         "enum"
+         "note"
+         "factory"
+         "when"
+         "otherwise"
+         "map"
+         "fail")
+   'words)
+  "Regular expression for sedona keywords.")
 
-(setq sedona-mode-font-lock-keywords
-      `(
-        (,sedona-mode-keywords-regexp . font-lock-keyword-face)
-        (,sedona-mode-builtins-regexp . font-lock-builtin-face)
-        ;;(,sedona-mode-operators-regexp . font-lock-negation-char-face)
-        ;; module declaration
-        ("\\s-*\\(hierarchy\\|module\\)\\s-*\\(\\sw+\\)\\s-*\\(#(.*)\\)?(.*)" 2 font-lock-function-name-face)
-        ;; module instantiation
-        ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)" 1 font-lock-function-name-face)
-        ("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)" 2 font-lock-variable-name-face)
-        ;; port type
-        ("\\(in\\|out\\|inout\\)\\s-+\\(genport(.+)\\s-+\\)?\\(\\sw+\\)\\s-+\\(\\sw+\\),?" 3 font-lock-type-face)
-        ;; parameter type?
-        ;; variable / channel declaration
-        ("^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;" 1 font-lock-type-face)
-        ("^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;" 2 font-lock-variable-name-face)
-        ;; type declaration
-        ("type\\s-+\\(\\sw+\\)\\s-*;" 1 font-lock-type-face)
-        ;; define
-        ("#define\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)" 1 font-lock-constant-face)
-        ;; templates
-        ("\\(\\[\\[\\)" 1 font-lock-warning-face)
-        ("\\(\\]\\]\\)" 1 font-lock-warning-face)
-        ;; enum
-        ("enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*;" 1 font-lock-type-face)
-        ;; enum access
-        ("\\(\\sw+\\)::\\(\\sw+\\)" 1 font-lock-type-face)
-        ("\\(\\sw+\\)::\\(\\sw+\\)" 2 font-lock-constant-face)
-        ;; notes
-        ("note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;" 1 font-lock-type-face)
-        ("note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;" 3 font-lock-variable-name-face)
-        ("note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;" 4 font-lock-constant-face)
-        ))
+(defconst sedona/builtin-regexp
+  (regexp-opt
+   (list "in"
+         "out"
+         "inout"
+         "include"
+         "define"
+         "const"
+         "type"
+         "isequal")
+   'words)
+  "Regular expressions for sedona builtins.")
 
-(font-lock-add-keywords
- 'sedona-mode-font-lock-keywords
- '("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*(.*)" 1 'font-lock-function-name-face)
- )
+(defconst sedona/mapping-operator-regexp
+  (regexp-opt
+   (list "->")
+   'words)
+  "Mapping operators")
+
+(defconst sedona/builtin-type-regexp
+  (regexp-opt
+   (list "int"
+         "bool")
+   'words)
+  "Sedona builtin types")
+
+(defconst sedona/builtin-const-regexp
+  (regexp-opt
+   (list "true"
+         "false")
+   'words)
+  "Sedona builtin constants")
+
+(defconst sedona/module-inst-regex
+  "\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)"
+  )
+
+;; NOTE doesn't work
+(defconst sedona/variable-declaration-regex
+  "^\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+;"
+  )
+
+(defconst sedona/type-declaration-regex
+  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*;"
+  )
+
+(defconst sedona/module-declaration-regex
+  "\\s-*\\(hierarchy\\|module\\)\\s-*\\(\\sw+\\)\\s-*\\(#(.*)\\)?(.*)"
+  )
+
+(defconst sedona/channel-typification-regex
+  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\((.*)\\)?\\s-*;")
+
+(defconst sedona/port-types-regex
+  "\\(in\\|out\\|inout|const\\)\\s-+\\(genport(.+)\\s-+\\)?\\(\\sw+\\)\\s-+\\(\\sw+\\),?"
+  )
+
+(defconst sedona/note-regex
+  "note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;")
+
+(defconst sedona/mapping-regex
+  "\\([0-9a-zA-Z_]+\\)\\s-+\\(->\\)\\s-+\\([0-9a-zA-Z_()]+\\)\\s-*,"
+  )
+
+(defconst sedona/when-regex
+  "when\\s-+\\([\\s-\\sw<>,]+\\)\\s-*\\(->\\)\\s-*\\([\\s-\\sw()]+\\)\\s-*,"
+  )
+
+(defconst sedona/otherwise-regex
+  "otherwise\\s-*\\(->\\)\\s-*.*")
+
+(defconst sedona/enum-decl-regex
+  "enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*;")
+
+(defconst sedona/enum-access-regex
+  "\\(\\sw+\\)::\\(\\sw+\\)")
+
+(defconst sedona/define-regex
+  "#define\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)")
+
+(defconst sedona/factory-definition-regex
+  "factory\\s-+\\(\\sw+\\)\\s-*<[^>]+>\\s-*\\(=>\\)\\s-*\\(\\sw+\\)\\s-*:")
+
+(defface sedona-functional-operator
+  '((t :weight bold))
+  "Face for funtional operators"
+  )
+
+(defconst sedona/font-lock-definitions
+  `(
+    ;; keywords, builtins, etc
+    (,sedona/keywords-regexp
+     (0 font-lock-keyword-face))
+    (,sedona/builtin-regexp
+     (0 font-lock-builtin-face))
+    (,sedona/builtin-type-regexp
+     (0 font-lock-type-face))
+    (,sedona/builtin-const-regexp
+     (0 font-lock-constant-face))
+    (,sedona/mapping-operator-regexp
+     (0 (get 'sedona-functional-operator 'face-defface-spec)))
+    ;; module / hierarchy declaration
+    (,sedona/module-declaration-regex
+     (2 font-lock-function-name-face))
+    ;; module / hierarchy instantiation
+    (,sedona/module-inst-regex
+     (1 font-lock-function-name-face)
+     (2 font-lock-variable-name-face))
+    ;; variable and channel declarations
+    ;;(,sedona/variable-declaration-regex
+    ;; (1 font-lock-type-face)
+    ;; (2 font-lock-variable-name-face))
+    ;; type declarations
+    (,sedona/type-declaration-regex
+     (1 font-lock-keyword-face t)
+     (2 font-lock-type-face))
+    ;; channel typification
+    (,sedona/channel-typification-regex
+     (2 font-lock-type-face)
+     (3 font-lock-type-face))
+    ;; hierarchy ports
+    (,sedona/port-types-regex
+     (3 font-lock-type-face))
+    ;; note statements
+    (,sedona/note-regex
+     (1 font-lock-type-face)
+     (3 font-lock-variable-face)
+     (4 font-lock-constant-face))
+    ;; map statements
+    (,sedona/mapping-regex
+     (1 font-lock-variable-name-face t)
+     (2 (get 'sedona-functional-operator 'face-defface-spec)))
+    (,sedona/when-regex
+     (2 (get 'sedona-functional-operator 'face-defface-spec)))
+    (,sedona/otherwise-regex
+     (1 (get 'sedona-functional-operator 'face-defface-spec)))
+    ;; enums
+    (,sedona/enum-decl-regex
+     (1 font-lock-type-face))
+    (,sedona/enum-access-regex
+     (1 font-lock-type-face)
+     (2 font-lock-constant-face))
+    ;; define macros
+    (,sedona/define-regex
+     (1 font-lock-constant-face))
+    ;; templates
+    ("\\(\\[\\[\\)" 1 font-lock-warning-face)
+    ("\\(\\]\\]\\)" 1 font-lock-warning-face)
+    (,sedona/factory-definition-regex
+     (1 font-lock-function-name-face)
+     (2 (get 'sedona-functional-operator 'face-defface-spec)))
+    )
+  "Sedona font-lock stuff.")
+
+;; (font-lock-add-keywords
+;;  'sedona-mode-font-lock-keywords
+;;  '("\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*(.*)" 1 'font-lock-function-name-face)
+;;  )
 
 ;; indentation
 (defun sedona-mode-indent-line ()
@@ -99,16 +224,32 @@
             (indent-line-to cur-indent)
           (indent-line-to 0)))))
 
-(defun sedona-mode ()
-  "Streaming Architecture DSL mode"
-  (interactive)
-  (kill-all-local-variables)
-  (set-syntax-table sedona-mode-syntax-table)
-  (set (make-local-variable 'font-lock-defaults) '(sedona-mode-font-lock-keywords))
-  (set (make-local-variable 'indent-line-function) 'sedona-mode-indent-line)
-  (setq major-mode 'sedona-mode)
-  (setq mode-name "SpecC-H")
-  (run-hooks 'sedona-mode-hook))
+(defvar sedona-mode-map
+  (let ((map (make-sparse-keymap)))
+    map)
+  "Keymap for Sedona mode.")
+
+;;;###autoload
+(define-derived-mode sedona-mode prog-mode "Sedona"
+  "Major mode for the Sedona DSL
+
+\\{sedona-mode-map}"
+  (use-local-map sedona-mode-map)
+  (set (make-local-variable 'font-lock-defaults)
+       '(sedona/font-lock-definitions nil t))
+  (font-lock-mode 1)
+  ;; strings
+  (modify-syntax-entry ?\" "\"" sedona-mode-syntax-table)
+  ;; comment stuff
+  (modify-syntax-entry ?/ ". 124b" sedona-mode-syntax-table)
+  (modify-syntax-entry ?* ". 23" sedona-mode-syntax-table)
+  (modify-syntax-entry ?\n "> b" sedona-mode-syntax-table)
+  (modify-syntax-entry ?_ "w" sedona-mode-syntax-table))
+
+;;;###autoload
+(progn
+  (add-to-list 'auto-mode-alist '("\\.h\\(i|r\\)$" . sedona-mode)))
 
 (provide 'sedona-mode)
+
 ;;; sedona-mode.el ends here
