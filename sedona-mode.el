@@ -196,7 +196,7 @@
   (beginning-of-line)
   (if (bobp)
       (indent-line-to 0)
-    (let ((not-indented t) in-map-depth cur-indent)
+    (let ((not-indented t) extra-decl-indent decl-closing cur-indent)
       (if (looking-at "^.*}")
           (progn
             (save-excursion
@@ -222,16 +222,28 @@
                 (if (looking-at "^.*:$")
                     (progn
                       (setq cur-indent (+ (current-indentation) sedona/default-tab-width))
-                      (setq not-indented nil)
-                      (setq in-map-depth t))
+                      (setq not-indented nil))
                   (if (looking-at "^.*->.*;")
                       (progn
                         (setq cur-indent 0)
                         (setq not-indented nil))
-                    (if (bobp)
-                        (setq not-indented nil)))))))))
+                    (if (looking-at ".+#(.*[,)]$")
+                        (progn
+                          (setq extra-decl-indent (+ (string-match-p "#(.*[,)]$" (thing-at-point 'line t)) 1))
+                          (if decl-closing
+                              (setq cur-indent (- (current-indentation) extra-decl-indent))
+                            (setq cur-indent (+ (current-indentation) extra-decl-indent)))
+                          (setq not-indented nil))
+                      (if (looking-at "^.+);$")
+                          (progn
+                            (setq decl-closing t))
+                        (if (bobp)
+                            (setq not-indented nil)))))))))))
       (if cur-indent
-          (indent-line-to cur-indent)
+          (progn
+            (if (< cur-indent 0)
+                (setq cur-indent 0))
+            (indent-line-to cur-indent))
         (indent-line-to 0)))))
 
 (defvar sedona-mode-map
