@@ -114,6 +114,12 @@
 (defconst sedona/factory-definition-regex
   "factory\\s-+\\(\\sw+\\)\\s-*<[^>]+>\\s-*\\(=>\\)\\s-*\\(\\sw+\\)\\s-*:")
 
+(defconst sedona/factory-call-regex
+  "\\(\\sw+\\)<\\(.*\\)>")
+
+(defconst sedona/custom-delimiter-regex
+  "\\(<\\).*(\\(>\\))")
+
 (defface sedona-functional-operator
   '((t :weight bold))
   "Face for funtional operators"
@@ -181,6 +187,8 @@
     (,sedona/factory-definition-regex
      (1 font-lock-function-name-face)
      (2 (get 'sedona-functional-operator 'face-defface-spec)))
+    (,sedona/factory-call-regex
+     (1 font-lock-function-name-face))
     )
   "Sedona font-lock stuff.")
 
