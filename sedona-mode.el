@@ -27,7 +27,13 @@
          "when"
          "otherwise"
          "map"
-         "fail")
+         "fail"
+         "broadcast"
+         "slicer"
+         "splicer"
+         "slice"
+         "splice"
+         "join")
    'words)
   "Regular expression for sedona keywords.")
 
@@ -68,7 +74,6 @@
   "\\s-*\\(\\sw+\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)"
   )
 
-;; NOTE doesn't work
 (defconst sedona/variable-declaration-regex
   "\\(\\sw+\\)\\s-+[a-zA-Z_0-9, ]+;"
   )
@@ -231,7 +236,7 @@
                     (progn
                       (setq cur-indent (+ (current-indentation) sedona/default-tab-width))
                       (setq not-indented nil))
-                  (if (looking-at "^.*->.*;")
+                  (if (looking-at "^\\s-+otherwise\\s-*->.*;")
                       (progn
                         (setq cur-indent 0)
                         (setq not-indented nil))
