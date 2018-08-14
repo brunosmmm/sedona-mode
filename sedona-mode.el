@@ -33,7 +33,11 @@
          "splicer"
          "slice"
          "splice"
-         "join")
+         "join"
+         "behavior"
+         "pipe"
+         "par"
+         "seq")
    'words)
   "Regular expression for sedona keywords.")
 
@@ -125,6 +129,9 @@
 (defconst sedona/custom-delimiter-regex
   "\\(<\\).*(\\(>\\))")
 
+(defconst sedona/behavior-regex
+  "behavior\\s-+\\(\\sw+\\)")
+
 (defface sedona-functional-operator
   '((t :weight bold))
   "Face for funtional operators"
@@ -150,6 +157,9 @@
     (,sedona/module-inst-regex
      (1 font-lock-function-name-face)
      (2 font-lock-variable-name-face))
+    ;; behavior
+    (,sedona/behavior-regex
+     (1 font-lock-function-name-face))
     ;; variable and channel declarations
     (,sedona/variable-declaration-regex
      (1 font-lock-variable-name-face))
@@ -280,7 +290,17 @@
   (modify-syntax-entry ?/ ". 124b" sedona-mode-syntax-table)
   (modify-syntax-entry ?* ". 23" sedona-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" sedona-mode-syntax-table)
-  (modify-syntax-entry ?_ "w" sedona-mode-syntax-table))
+  (modify-syntax-entry ?_ "w" sedona-mode-syntax-table)
+  (modify-syntax-entry ?< "." sedona-mode-syntax-table)
+  (modify-syntax-entry ?> "." sedona-mode-syntax-table)
+  ;; do smartparens stuff
+  (sp-local-pair 'sedona-custom-pairs "<" ">"
+                 :skip-match (lambda (ms mb me)
+                               (if mb
+                                   nil
+                                 t)))
+  (sp-update-local-pairs 'sedona-custom-pairs))
+
 
 ;;;###autoload
 (progn
