@@ -51,7 +51,10 @@
          "define"
          "const"
          "type"
-         "isequal")
+         "isequal"
+         "range"
+         "mkvar"
+         "gettype")
    'words)
   "Regular expressions for sedona builtins.")
 
