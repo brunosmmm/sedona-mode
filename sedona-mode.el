@@ -38,7 +38,8 @@
          "pipe"
          "par"
          "seq"
-         "lambda")
+         "lambda"
+         "auto")
    'words)
   "Regular expression for sedona keywords.")
 
