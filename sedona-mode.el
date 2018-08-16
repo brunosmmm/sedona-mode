@@ -39,7 +39,9 @@
          "par"
          "seq"
          "lambda"
-         "auto")
+         "auto"
+         "band"
+         "field")
    'words)
   "Regular expression for sedona keywords.")
 
@@ -55,7 +57,9 @@
          "isequal"
          "range"
          "mkvar"
-         "gettype")
+         "gettype"
+         "override"
+         "null")
    'words)
   "Regular expressions for sedona builtins.")
 
