@@ -41,7 +41,8 @@
          "lambda"
          "auto"
          "band"
-         "field")
+         "field"
+         "using")
    'words)
   "Regular expression for sedona keywords.")
 
