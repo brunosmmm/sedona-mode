@@ -88,11 +88,11 @@
   )
 
 (defconst sedona/variable-declaration-regex
-  "\\(\\sw+\\)\\s-+[a-zA-Z_0-9, ]+;"
+  "\\(\\sw+\\)\\s-+[a-zA-Z_0-9, ]+;?"
   )
 
 (defconst sedona/type-declaration-regex
-  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*;"
+  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*;?"
   )
 
 (defconst sedona/module-declaration-regex
@@ -100,14 +100,14 @@
   )
 
 (defconst sedona/channel-typification-regex
-  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\((.*)\\)?\\s-*;")
+  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\((.*)\\)?\\s-*;?")
 
 (defconst sedona/port-types-regex
   "\\(in\\|out\\|inout|const\\)\\s-+\\(genport(.+)\\s-+\\)?\\(\\sw+\\)\\s-+\\(\\sw+\\),?"
   )
 
 (defconst sedona/note-regex
-  "note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;")
+  "note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;?")
 
 (defconst sedona/mapping-regex
   "\\([0-9a-zA-Z_]+\\)\\s-+\\(->\\)\\s-+\\([0-9a-zA-Z_()]+\\)\\s-*,"
@@ -121,7 +121,7 @@
   "otherwise\\s-*\\(->\\)\\s-*.*")
 
 (defconst sedona/enum-decl-regex
-  "enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*;")
+  "enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*;?")
 
 (defconst sedona/enum-access-regex
   "\\(\\sw+\\)::\\(\\sw+\\)")
