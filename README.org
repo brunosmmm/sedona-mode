@@ -1,0 +1,4 @@
+
+* Sedona Mode
+
+Sedona Major mode for Emacs
