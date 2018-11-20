@@ -2,3 +2,12 @@
 * Sedona Mode
 
 Sedona Major mode for Emacs
+
+** Spacemacs installation:
+
+   Add:
+   #+BEGIN_SRC elisp
+   (sedona-mode :location (recipe :fetcher github :repo "brunosmmm/sedona-mode"))
+   #+END_SRC
+
+   To your =dotspacemacs-additional-packages= variable in .spacemacs
