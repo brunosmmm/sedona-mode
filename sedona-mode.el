@@ -389,47 +389,49 @@
             (indent-line-to cur-indent))
         (indent-line-to 0)))))
 
-(defvar sedona-mode-map
-  (let ((map (make-sparse-keymap)))
-    map)
-  "Keymap for Sedona mode.")
+(defvar sedona-imenu-generic-expression
+  '(("Const" "const\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\s-*=\\s-*\\(.+\\)$" 1)
+    ("Module" "module\\s-+\\(\\sw+\\).*$" 1)
+    ("Hierarchy" "hierarchy\\s-+\\(\\sw+\\).*$" 1)
+    ("Interface" "interface\\s-+\\(\\sw+\\).*$" 1)
+    ("Slicer" "slicer\\s-+\\(\\sw+\\).*$" 1)
+    ("Template" "template\\s-+\\(\\sw+\\).*$" 1)
+    )
+  )
+
+(defconst sedona-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?\" "\"" table)
+    (modify-syntax-entry ?/ ". 124b" table)
+    (modify-syntax-entry ?* ". 23" table)
+    (modify-syntax-entry ?\n "> b" table)
+    (modify-syntax-entry ?_ "w" table)
+    (modify-syntax-entry ?< "." table)
+    (modify-syntax-entry ?> "." table)
+    (modify-syntax-entry ?| "$" table)
+    table)
+  )
 
 ;;;###autoload
 (define-derived-mode sedona-mode prog-mode "Sedona"
-  "Major mode for the Sedona DSL
-
-\\{sedona-mode-map}"
-  (use-local-map sedona-mode-map)
-  (set (make-local-variable 'font-lock-defaults)
-       '(sedona/font-lock-definitions nil t))
-  (set (make-local-variable 'indent-line-function) 'sedona-mode-indent-line)
-  (font-lock-mode 1)
-  (set (make-local-variable 'comment-start) "// ")
-  (setq sedona-mode-syntax-table (make-syntax-table))
-  (setq sedona-mode-syntax-table (make-syntax-table text-mode-syntax-table))
-  (modify-syntax-entry ?\" "\"" sedona-mode-syntax-table)
-  ;; comment stuff
-  (modify-syntax-entry ?/ ". 124b" sedona-mode-syntax-table)
-  (modify-syntax-entry ?* ". 23" sedona-mode-syntax-table)
-  (modify-syntax-entry ?\n "> b" sedona-mode-syntax-table)
-  (modify-syntax-entry ?_ "w" sedona-mode-syntax-table)
-  ;; (modify-syntax-entry ?< "(>" sedona-mode-syntax-table)
-  ;; (modify-syntax-entry ?> ")<" sedona-mode-syntax-table)
-  (modify-syntax-entry ?< "." sedona-mode-syntax-table)
-  (modify-syntax-entry ?> "." sedona-mode-syntax-table)
-  (modify-syntax-entry ?| "$" sedona-mode-syntax-table)
+  "Major mode for the Sedona DSL."
+  :syntax-table sedona-mode-syntax-table
+  (setq font-lock-defaults '(sedona/font-lock-definitions))
+  (setq-local indent-line-function 'sedona-mode-indent-line)
+  (setq-local comment-start "// ")
   ;; do smartparens stuff
   (sp-local-pair 'sedona-custom-pairs "<" ">"
                  :skip-match (lambda (ms mb me)
                                (if mb
                                    nil
                                  t)))
-  (sp-update-local-pairs 'sedona-custom-pairs))
+  (sp-update-local-pairs 'sedona-custom-pairs)
+  (setq-local imenu-generic-expression sedona-imenu-generic-expression)
+  )
 
 
 ;;;###autoload
-(progn
-  (add-to-list 'auto-mode-alist '("\\.h\\(i|r\\)$" . sedona-mode)))
+(add-to-list 'auto-mode-alist '("\\.h\\(i|r\\)\\'" . sedona-mode))
 
 (provide 'sedona-mode)
 
