@@ -182,7 +182,7 @@
   "\\(const\\s-+\\)?\\(attr\\)\\s-+\\(\\sw+\\).\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\(\\s-*=\\s-*\\)?")
 
 (defconst sedona/endpoint-regex
-  "\\(read\\|write\\|read\\s-+write\\|write\\s-+read\\)?\\s-+\\(endpoint\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)")
+  "\\(read\\|write\\|read\\s-+write\\|write\\s-+read\\)?\\s-+\\(endpoint\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)?\\s-+\\(\\sw+\\)")
 
 (defconst sedona/name-list-regex
   "\\(|\\)\\s-*\\(\\sw+,?\\s-*\\)+\\s-*\\(|\\)")
@@ -259,7 +259,8 @@
     ;;endpoint
     (,sedona/endpoint-regex
      (3 font-lock-variable-name-face)
-     (4 font-lock-type-face))
+     (4 font-lock-builtin-face nil t)
+     (5 font-lock-type-face))
     ;; simple interface declaration
     (,sedona/simple-interface-decl-regex
      (2 font-lock-type-face))
