@@ -18,7 +18,7 @@
   (regexp-opt
    (list "hierarchy"
          "module"
-         "import"
+         "include"
          "generate"
          "genport"
          "enum"
@@ -32,17 +32,22 @@
          "slicer"
          "splicer"
          "slice"
+         "stream"
+         "attr"
+         "endpoint"
          "splice"
          "join"
-         "behavior"
-         "pipe"
-         "par"
-         "seq"
          "lambda"
          "auto"
          "band"
          "field"
-         "using")
+         "using"
+         "with"
+         "partition"
+         "interface"
+         "constraint"
+         "localpartition"
+         "implements")
    'words)
   "Regular expression for sedona keywords.")
 
@@ -51,15 +56,20 @@
    (list "in"
          "out"
          "inout"
-         "include"
          "define"
          "const"
          "type"
          "isequal"
          "range"
-         "mkvar"
+         "mkstream"
          "gettype"
          "override"
+         "read"
+         "write"
+         "application"
+         "platform"
+         "decomposable"
+         "monolithic"
          "null")
    'words)
   "Regular expressions for sedona builtins.")
@@ -73,7 +83,10 @@
 (defconst sedona/builtin-type-regexp
   (regexp-opt
    (list "int"
-         "bool")
+         "bool"
+         "float"
+         "list"
+         )
    'words)
   "Sedona builtin types")
 
@@ -89,11 +102,11 @@
   )
 
 (defconst sedona/variable-declaration-regex
-  "\\(\\sw+\\)\\s-+[a-zA-Z_0-9, ]+;?"
+  "\\(\\sw+\\)\\s-+[a-zA-Z_0-9, ]+"
   )
 
 (defconst sedona/type-declaration-regex
-  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*;?"
+  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*"
   )
 
 (defconst sedona/module-declaration-regex
@@ -101,14 +114,14 @@
   )
 
 (defconst sedona/channel-typification-regex
-  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\((.*)\\)?\\s-*;?")
+  "\\(type\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\((.*)\\)?\\s-*")
 
 (defconst sedona/port-types-regex
-  "\\(in\\|out\\|inout|const\\)\\s-+\\(genport(.+)\\s-+\\)?\\(\\sw+\\)\\s-+\\(\\sw+\\),?"
+  "\\(in\\|out\\|inout\\|const\\)\\s-+\\(\sw+\\)\\s-*\\(<[^>]+>\\)?\\s-*:\\s-*\\(\\sw+\\),?"
   )
 
 (defconst sedona/note-regex
-  "note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*;?")
+  "note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*")
 
 (defconst sedona/mapping-regex
   "\\([0-9a-zA-Z_]+\\)\\s-+\\(->\\)\\s-+\\([0-9a-zA-Z_()]+\\)\\s-*,"
@@ -122,7 +135,7 @@
   "otherwise\\s-*\\(->\\)\\s-*.*")
 
 (defconst sedona/enum-decl-regex
-  "enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*;?")
+  "enum\\s-+\\(\\sw+\\)\\s-*{.+}\\s-*")
 
 (defconst sedona/enum-access-regex
   "\\(\\sw+\\)::\\(\\sw+\\)")
@@ -139,8 +152,26 @@
 (defconst sedona/custom-delimiter-regex
   "\\(<\\).*(\\(>\\))")
 
-(defconst sedona/behavior-regex
-  "behavior\\s-+\\(\\sw+\\)")
+(defconst sedona/simple-interface-decl-regex
+  "\\(interface\\)\\s-+\\(\\sw+\\)"
+  )
+
+(defconst sedona/partition-declaration-regex
+  "^\\s-*\\(partition\\)\\s-+\\(\\sw+\\)"
+  )
+
+(defconst sedona/partition-implements-regex
+  "\\(implements\\)\\s-+\\(\\(\\sw+\\),?\\)+"
+  )
+
+(defconst sedona/attr-regex
+  "\\(attr\\)\\s-+\\(\\sw+\\)\\s-*=\\s-*")
+
+(defconst sedona/attr-member-regex
+  "\\(attr\\)\\s-+\\(\\sw+\\).\\(\\sw+\\)\\s-*=\\s-*")
+
+(defconst sedona/endpoint-regex
+  "\\(read\\|write\\|read\\s-+write\\|write\\s-+read\\)?\\s-+\\(endpoint\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)")
 
 (defface sedona-functional-operator
   '((t :weight bold))
@@ -160,6 +191,22 @@
      (0 font-lock-constant-face))
     (,sedona/mapping-operator-regexp
      (0 (get 'sedona-functional-operator 'face-defface-spec)))
+    ;; attr
+    ;; (,sedona/attr-regex
+    ;;  (1 font-lock-variable-face))
+    ;; (,sedona/attr-member-regex
+    ;;  (2 font-lock-variable-face)
+    ;;  (3 font-lock-function-name-face))
+    ;;endpoint
+    (,sedona/endpoint-regex
+     (3 font-lock-variable-name-face)
+     (4 font-lock-type-face))
+    ;; simple interface declaration
+    (,sedona/simple-interface-decl-regex
+     (2 font-lock-type-face))
+    ;; partition
+    (,sedona/partition-declaration-regex
+     (2 font-lock-type-face))
     ;; module / hierarchy declaration
     (,sedona/module-declaration-regex
      (2 font-lock-function-name-face))
@@ -167,9 +214,6 @@
     (,sedona/module-inst-regex
      (1 font-lock-function-name-face)
      (2 font-lock-variable-name-face))
-    ;; behavior
-    (,sedona/behavior-regex
-     (1 font-lock-function-name-face))
     ;; variable and channel declarations
     (,sedona/variable-declaration-regex
      (1 font-lock-variable-name-face))
@@ -183,7 +227,9 @@
      (3 font-lock-type-face))
     ;; hierarchy ports
     (,sedona/port-types-regex
-     (3 font-lock-type-face))
+     (2 font-lock-variable-name-face)
+     (3 font-lock-constant-face)
+     (4 font-lock-type-face))
     ;; note statements
     (,sedona/note-regex
      (1 font-lock-type-face)
