@@ -87,6 +87,7 @@
    (list "int"
          "bool"
          "float"
+         "str"
          "list"
          )
    'words)
@@ -174,6 +175,12 @@
 (defconst sedona/attr-member-regex
   "\\(attr\\)\\s-+\\(\\sw+\\).\\(\\sw+\\)\\s-*=\\s-*")
 
+(defconst sedona/attr-decl-regex
+  "\\(const\\s-+\\)?\\(attr\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\(\\s-*=\\s-*\\)?")
+
+(defconst sedona/attr-decl-member-regex
+  "\\(const\\s-+\\)?\\(attr\\)\\s-+\\(\\sw+\\).\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\(\\s-*=\\s-*\\)?")
+
 (defconst sedona/endpoint-regex
   "\\(read\\|write\\|read\\s-+write\\|write\\s-+read\\)?\\s-+\\(endpoint\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)")
 
@@ -239,6 +246,12 @@
     (,sedona/attr-member-regex
      (2 font-lock-variable-name-face)
      (3 font-lock-function-name-face))
+    (,sedona/attr-decl-regex
+     (4 font-lock-type-face))
+    (,sedona/attr-decl-member-regex
+     (3 font-lock-variable-name-face)
+     (4 font-lock-function-name-face)
+     (5 font-lock-type-face))
     ;; name list
     (,sedona/name-list-regex
      (1 font-lock-builtin-face)
