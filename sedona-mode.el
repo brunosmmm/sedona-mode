@@ -69,6 +69,7 @@
          "application"
          "platform"
          "decomposable"
+         "tile"
          "monolithic"
          "null")
    'words)
