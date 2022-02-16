@@ -431,7 +431,7 @@
 
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.h\\(i|r\\)\\'" . sedona-mode))
+(add-to-list 'auto-mode-alist '("\\.hr\\'" . sedona-mode))
 
 (provide 'sedona-mode)
 
