@@ -46,6 +46,7 @@
          "partition"
          "interface"
          "constraint"
+         "template"
          "localpartition"
          "implements")
    'words)
@@ -111,7 +112,7 @@
   )
 
 (defconst sedona/module-declaration-regex
-  "\\(hierarchy\\|module\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)"
+  "\\(\\(application\\s-+\\|platform\\s-+\\|tile\\s-+\\)\\|\\(monolithic\\s-+\\(decomposable\\s-+\\)?\\)\\)?\\(hierarchy\\|module\\)\\s-+\\(\\sw+\\)\\s-*\\(#(.*)\\)?\\s-*(.*)\\(\\s-*:\\s-*\\(\\sw+\\)\\)?"
   )
 
 (defconst sedona/channel-typification-regex
@@ -180,17 +181,28 @@
   "\\(|\\)\\s-*\\(\\sw+,?\\s-*\\)+\\s-*\\(|\\)")
 
 (defconst sedona/slicer-regex
-  "\\(slicer\\)\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\s-*\\(=>\\)")
+  "\\(slicer\\)\\s-+\\(\\sw+\\)\\(<[^>]+>\\)?\\s-*:\\s-*\\(\\sw+\\)\\s-*\\(=>\\)")
 
 (defconst sedona/slicer-map-regex
-  "\\(map\\)\\s-+\\(\\sw+\\)\\.\\(\\sw+\\)\\s-*\\(->\\)")
+  "\\(map\\)\\s-+\\(\\sw+\\).\\(\\sw+\\)\\(\\[[^]]+\\]\\)?\\s-*\\(->\\)")
 
 (defconst sedona/stream-declaration-regex
   "\\(stream\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+\\s-*:\\s-*\\(\\sw+\\)")
 
+(defconst sedona/constraint-declaration-regex
+  "constraint\\s-+\\(\\sw+\\)\\s-*:\\s-*")
+
+(defconst sedona/template-declaration-regex
+  "template\\s-+\\(\\sw+\\)")
+
 (defface sedona-functional-operator
   '((t :weight bold))
   "Face for funtional operators"
+  )
+
+(defface sedona-pipeline-operator
+  '((t :weight bold))
+  "Face for pipeline operators"
   )
 
 (defconst sedona/font-lock-definitions
@@ -206,18 +218,21 @@
      (0 font-lock-constant-face))
     (,sedona/mapping-operator-regexp
      (0 (get 'sedona-functional-operator 'face-defface-spec)))
+    ;; template
+    (,sedona/template-declaration-regex
+     (1 font-lock-function-name-face))
     ;; stream
     (,sedona/stream-declaration-regex
      (3 font-lock-type-face))
     ;; slicer
     (,sedona/slicer-regex
      (2 font-lock-function-name-face)
-     (3 font-lock-type-face)
-     (4 (get 'sedona-functional-operator 'face-defface-spec))
+     (4 font-lock-type-face)
+     (5 (get 'sedona-functional-operator 'face-defface-spec))
      )
     (,sedona/slicer-map-regex
      (2 font-lock-type-face)
-     (4 (get 'sedona-functional-operator 'face-defface-spec)))
+     (5 (get 'sedona-functional-operator 'face-defface-spec)))
     ;; attr
     (,sedona/attr-regex
      (2 font-lock-variable-name-face))
@@ -225,10 +240,9 @@
      (2 font-lock-variable-name-face)
      (3 font-lock-function-name-face))
     ;; name list
-    ;; (,sedona/name-list-regex
-    ;;  (1 font-lock-builtin-face)
-    ;;  (3 font-lock-builtin-face)
-    ;;  )
+    (,sedona/name-list-regex
+     (1 font-lock-builtin-face)
+     (3 font-lock-builtin-face))
     ;;endpoint
     (,sedona/endpoint-regex
      (3 font-lock-variable-name-face)
@@ -242,9 +256,13 @@
     ;; partition
     (,sedona/partition-declaration-regex
      (2 font-lock-type-face))
+    ;; constraint
+    (,sedona/constraint-declaration-regex
+     (1 font-lock-function-name-face))
     ;; module / hierarchy declaration
     (,sedona/module-declaration-regex
-     (2 font-lock-function-name-face))
+     (6 font-lock-function-name-face)
+     (9 font-lock-function-name-face nil t))
     ;; module / hierarchy instantiation
     (,sedona/module-inst-regex
      (1 font-lock-function-name-face)
