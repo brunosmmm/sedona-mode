@@ -404,7 +404,7 @@
        '(sedona/font-lock-definitions nil t))
   (set (make-local-variable 'indent-line-function) 'sedona-mode-indent-line)
   (font-lock-mode 1)
-  ;; strings
+  (set (make-local-variable 'comment-start) "// ")
   (setq sedona-mode-syntax-table (make-syntax-table))
   (setq sedona-mode-syntax-table (make-syntax-table text-mode-syntax-table))
   (modify-syntax-entry ?\" "\"" sedona-mode-syntax-table)
