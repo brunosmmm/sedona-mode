@@ -6,6 +6,7 @@
 (require 'custom)
 (require 'font-lock)
 (require 'regexp-opt)
+(require 'smartparens)
 
 (defgroup sedona nil
   "Major mode for Sedona DSL."
@@ -127,7 +128,7 @@
   "note\\s-+\\(\\sw+\\(\\.\\)\\)?\\(\\sw+\\)\\s-*=\\s-*\\(\\sw+\\)\\s-*")
 
 (defconst sedona/mapping-regex
-  "\\([0-9a-zA-Z_]+\\)\\s-+\\(->\\)\\s-+\\([0-9a-zA-Z_()]+\\)\\s-*,"
+  "\\(\\sw+\\)\\s-+\\(->\\)\\s-+\\(\\sw+\\)\\s-*,"
   )
 
 (defconst sedona/when-regex
@@ -370,14 +371,14 @@
                       (progn
                         (setq cur-indent 0)
                         (setq not-indented nil))
-                    (if (looking-at ".+#(.*[,)]$")
+                    (if (looking-at ".+#(.*[,)]\\s-*$")
                         (progn
-                          (setq extra-decl-indent (+ (string-match-p "#(.*[,)]$" (thing-at-point 'line t)) 1))
+                          (setq extra-decl-indent (+ (string-match-p "#(.*[,)]\\s-*$" (thing-at-point 'line t)) 1))
                           (if decl-closing
                               (setq cur-indent (- (current-indentation) extra-decl-indent))
                             (setq cur-indent (+ (current-indentation) extra-decl-indent)))
                           (setq not-indented nil))
-                      (if (looking-at "^.+);$")
+                      (if (looking-at "^.+)\\s-*$")
                           (progn
                             (setq decl-closing t))
                         (if (bobp)
