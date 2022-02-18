@@ -203,6 +203,9 @@
 (defconst sedona/template-declaration-regex
   "template\\s-+\\(\\sw+\\)")
 
+(defconst sedona/pipeline-inst-regex
+  "\\(\\sw+\\)\\s-*\\(#([^)]*)\\)")
+
 (defface sedona-functional-operator
   '((t :weight bold))
   "Face for funtional operators"
@@ -226,6 +229,9 @@
      (0 font-lock-constant-face))
     (,sedona/mapping-operator-regexp
      (0 (get 'sedona-functional-operator 'face-defface-spec)))
+    ;; pipeline instance
+    (,sedona/pipeline-inst-regex
+     (1 font-lock-function-name-face))
     ;; template
     (,sedona/template-declaration-regex
      (1 font-lock-function-name-face))
