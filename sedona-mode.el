@@ -414,7 +414,7 @@
     ("Slicer" "slicer\\s-+\\(\\sw+\\).*$" 1)
     ("Template" "template\\s-+\\(\\sw+\\).*$" 1)
     ("Converter" "converter\\s-+\\(\\sw+\\).*$" 1)
-    ("Factory" "factory\\s-+\\(\\sw+\\).$" 1)
+    ("Factory" "factory\\s-+\\(\\sw+\\).*$" 1)
     )
   )
 
