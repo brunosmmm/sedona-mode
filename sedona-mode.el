@@ -32,6 +32,8 @@
          "broadcast"
          "slicer"
          "splicer"
+         "converter"
+         "convert"
          "slice"
          "stream"
          "attr"
@@ -188,6 +190,9 @@
 (defconst sedona/name-list-regex
   "\\(|\\)\\s-*\\(\\sw+,?\\s-*\\)+\\s-*\\(|\\)")
 
+(defconst sedona/cast-regex
+  "\\(converter\\)\\s-+\\(\\sw+\\)\\(<[^>]+>\\)?\\s-*:\\s-*\\(\\sw+\\)\\s-*\\(=>\\)")
+
 (defconst sedona/slicer-regex
   "\\(slicer\\)\\s-+\\(\\sw+\\)\\(<[^>]+>\\)?\\s-*:\\s-*\\(\\sw+\\)\\s-*\\(=>\\)")
 
@@ -247,6 +252,11 @@
     (,sedona/slicer-map-regex
      (2 font-lock-type-face)
      (5 (get 'sedona-functional-operator 'face-defface-spec)))
+    (,sedona/cast-regex
+     (2 font-lock-function-name-face)
+     (4 font-lock-type-face)
+     (5 (get 'sedona-functional-operator 'face-defface-spec))
+     )
     ;; attr
     (,sedona/attr-regex
      (2 font-lock-variable-name-face))
@@ -403,6 +413,8 @@
     ("Interface" "interface\\s-+\\(\\sw+\\).*$" 1)
     ("Slicer" "slicer\\s-+\\(\\sw+\\).*$" 1)
     ("Template" "template\\s-+\\(\\sw+\\).*$" 1)
+    ("Converter" "converter\\s-+\\(\\sw+\\).*$" 1)
+    ("Factory" "factory\\s-+\\(\\sw+\\).$" 1)
     )
   )
 
@@ -427,12 +439,9 @@
   (setq-local indent-line-function 'sedona-mode-indent-line)
   (setq-local comment-start "// ")
   ;; do smartparens stuff
-  (sp-local-pair 'sedona-custom-pairs "<" ">"
-                 :skip-match (lambda (ms mb me)
-                               (if mb
-                                   nil
-                                 t)))
-  (sp-update-local-pairs 'sedona-custom-pairs)
+  (sp-with-modes 'sedona-mode
+    (sp-local-pair "<" ">")
+    (sp-local-pair "|" "|"))
   (setq-local imenu-generic-expression sedona-imenu-generic-expression)
   )
 
