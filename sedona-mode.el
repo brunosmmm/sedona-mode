@@ -424,7 +424,7 @@
     ("Interface" "interface\\s-+\\(\\sw+\\).*$" 1)
     ("Slicer" "slicer\\s-+\\(\\sw+\\).*$" 1)
     ("Template" "template\\s-+\\(\\sw+\\).*$" 1)
-    ("Converter" "converter\\s-+\\(\\sw+\\).*$" 1)
+    ("Converter" "converter\\s-+\\(\\(\\sw+\\s-*=>\\s-*\\sw+\\)\\|\\(\\sw+\\)\\).*$" 1)
     ("Factory" "factory\\s-+\\(\\sw+\\).*$" 1)
     )
   )
