@@ -191,7 +191,10 @@
   "\\(|\\)\\s-*\\(\\sw+,?\\s-*\\)+\\s-*\\(|\\)")
 
 (defconst sedona/cast-regex
-  "\\(converter\\)\\s-+\\(\\sw+\\)\\(<[^>]+>\\)?\\s-*:\\s-*\\(\\sw+\\)\\s-*\\(=>\\)")
+  "\\(converter\\)\\s-+\\(\\sw+\\)\\(<[^>]+>\\)?\\s-*:\\s-*\\(\\sw+\\)\\s-*\\(=>\\)\\s-*\\(\\sw+\\)\\(\\s-*:\\s-*\\(\\sw+\\)\\)?")
+
+(defconst sedona/anonymous-cast-regex
+  "\\(converter\\)\\s-+\\(\\sw+\\)\\s-*\\(=>\\)\\s-*\\(\\sw+\\)\\s-*\\(:\\s-*\\(\\sw+\\)\\)?")
 
 (defconst sedona/slicer-regex
   "\\(slicer\\)\\s-+\\(\\sw+\\)\\(<[^>]+>\\)?\\s-*:\\s-*\\(\\sw+\\)\\s-*\\(=>\\)")
@@ -256,6 +259,14 @@
      (2 font-lock-function-name-face)
      (4 font-lock-type-face)
      (5 (get 'sedona-functional-operator 'face-defface-spec))
+     (6 font-lock-type-face)
+     (8 font-lock-function-name-face nil t)
+     )
+    (,sedona/anonymous-cast-regex
+     (2 font-lock-type-face)
+     (3 (get 'sedona-functional-operator 'face-defface-spec))
+     (4 font-lock-type-face)
+     (6 font-lock-function-name-face nil t)
      )
     ;; attr
     (,sedona/attr-regex
