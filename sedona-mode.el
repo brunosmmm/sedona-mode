@@ -41,7 +41,6 @@
          "splice"
          "join"
          "lambda"
-         "auto"
          "band"
          "field"
          "using"
@@ -61,6 +60,7 @@
    (list "in"
          "out"
          "inout"
+         "auto"
          "define"
          "const"
          "type"
@@ -76,6 +76,7 @@
          "decomposable"
          "tile"
          "monolithic"
+         "seq"
          "null")
    'words)
   "Regular expressions for sedona builtins.")
