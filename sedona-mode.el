@@ -443,7 +443,7 @@
     ("Hierarchy" "hierarchy\\s-+\\(\\sw+\\).*$" 1)
     ("Interface" "^\\s-*interface\\s-+\\(\\sw+\\).*$" 1)
     ("Slicer" "slicer\\s-+\\(\\sw+\\).*$" 1)
-    ("Splicer" "splicer\\s-+\\(aligned\\s-+\\)?\\(\\sw+\\).$" 2)
+    ("Splicer" "splicer\\s-+\\(aligned\\s-+\\)?\\(\\sw+\\).*$" 2)
     ("Template" "template\\s-+\\(\\sw+\\).*$" 1)
     ("Converter" "converter\\s-+\\(\\(\\sw+\\s-*=>\\s-*\\sw+\\)\\|\\(\\sw+\\)\\).*$" 1)
     ("Factory" "factory\\s-+\\(\\sw+\\).*$" 1)
