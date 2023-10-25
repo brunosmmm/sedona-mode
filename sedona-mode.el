@@ -46,6 +46,7 @@
          "field"
          "using"
          "with"
+         "aligned"
          "partition"
          "interface"
          "constraint"
@@ -81,7 +82,7 @@
 
 (defconst sedona/mapping-operator-regexp
   (regexp-opt
-   (list "->")
+   (list "->" "=>")
    'words)
   "Mapping operators")
 
@@ -202,6 +203,14 @@
 (defconst sedona/slicer-map-regex
   "\\(map\\)\\s-+\\(\\sw+\\).\\(\\sw+\\)\\(\\[[^]]+\\]\\)?\\s-*\\(->\\)")
 
+(defconst sedona/splicer-regex
+  "\\(splicer\\)\\s-+\\(aligned\\)?\\s-+\\(\\sw+\\)\\(<[^>]+>\\)?\\s-*:\s-*\\([^=]+\\)\\s-*\\(=>\\)\\s-*\\(\\sw+\\)"
+  )
+
+(defconst sedona/splicer-map-regex
+  "\\(map\\)\\s-+\\(\\sw+\\)\\s-*\\(->\\)\\s-*\\(\\sw+\\).\\(\\sw+\\)\\(\\[[^]]+\\]\\)?"
+  )
+
 (defconst sedona/stream-declaration-regex
   "\\(stream\\)\\s-+\\(\\sw+\\s-*,?\\s-*\\)+\\s-*:\\s-*\\(\\sw+\\)")
 
@@ -215,13 +224,15 @@
   "\\(\\sw+\\)\\s-*\\(#([^)]*)\\)")
 
 (defface sedona-functional-operator
-  '((t :weight bold))
-  "Face for funtional operators"
+  '((t :weight extra-bold :slant italic))
+  "Face for functional operators"
+  :group 'sedona-mode
   )
 
 (defface sedona-pipeline-operator
   '((t :weight bold))
   "Face for pipeline operators"
+  :group 'sedona-mode
   )
 
 (defconst sedona/font-lock-definitions
@@ -255,6 +266,15 @@
     (,sedona/slicer-map-regex
      (2 font-lock-type-face)
      (5 (get 'sedona-functional-operator 'face-defface-spec)))
+    (,sedona/splicer-regex
+     (3 font-lock-function-name-face)
+     (6 (get 'sedona-functional-operator 'face-defface-spec))
+     (7 font-lock-type-face)
+     )
+    (,sedona/splicer-map-regex
+     (3 (get 'sedona-functional-operator 'face-defface-spec))
+     (4 font-lock-type-face)
+     )
     (,sedona/cast-regex
      (2 font-lock-function-name-face)
      (4 font-lock-type-face)
@@ -421,8 +441,9 @@
   '(("Const" "const\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\s-*=\\s-*\\(.+\\)$" 1)
     ("Module" "module\\s-+\\(\\sw+\\).*$" 1)
     ("Hierarchy" "hierarchy\\s-+\\(\\sw+\\).*$" 1)
-    ("Interface" "interface\\s-+\\(\\sw+\\).*$" 1)
+    ("Interface" "^\\s-*interface\\s-+\\(\\sw+\\).*$" 1)
     ("Slicer" "slicer\\s-+\\(\\sw+\\).*$" 1)
+    ("Splicer" "splicer\\s-+\\(aligned\\s-+\\)?\\(\\sw+\\).$" 1)
     ("Template" "template\\s-+\\(\\sw+\\).*$" 1)
     ("Converter" "converter\\s-+\\(\\(\\sw+\\s-*=>\\s-*\\sw+\\)\\|\\(\\sw+\\)\\).*$" 1)
     ("Factory" "factory\\s-+\\(\\sw+\\).*$" 1)
