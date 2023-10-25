@@ -223,6 +223,14 @@
 (defconst sedona/pipeline-inst-regex
   "\\(\\sw+\\)\\s-*\\(#([^)]*)\\)")
 
+(defconst sedona/param-field-regex
+  "field\\s-+\\(\\sw+\\)\\s-*:\\s-*\\(\\sw+\\)\\(\\s-*<\\s-*\\(\\sw+\\)\\s-*>\\)?"
+  )
+
+(defconst sedona/size-field-regex
+  "field\\s-+\\(\\sw+\\)\\s-*:\\s-*\\([0-9]+\\)\\(\\s-*<\\s-*\\(\\sw+\\)\\s-*>\\)?"
+  )
+
 (defface sedona-functional-operator
   '((t :weight extra-bold :slant italic))
   "Face for functional operators"
@@ -372,6 +380,11 @@
      (2 (get 'sedona-functional-operator 'face-defface-spec)))
     (,sedona/factory-call-regex
      (1 font-lock-function-name-face))
+    (,sedona/param-field-regex
+     (2 font-lock-type-face)
+     (4 font-lock-type-face nil t))
+    (,sedona/param-field-regex
+     (4 font-lock-type-face nil t))
     )
   "Sedona font-lock stuff.")
 
